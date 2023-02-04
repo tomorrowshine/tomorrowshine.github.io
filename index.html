@@ -22,20 +22,20 @@
     }],
     start: function () {
      
-      // 使用定时器模拟接口
-      setTimeout(() => {
-        // 结束游戏
-       
-
-        myLucky.stop(0)
-      }, 3000)
+     
     }
   })
   
    system.onmessage = function(data) {
-          console.log('message received: ' + data)
+      console.log('message received: ' + data)
       // 开始游戏
       myLucky.play()
+      // 使用定时器模拟接口
+      setTimeout(() => {
+        // 结束游戏
+        myLucky.stop(0)
+        system.postMessage('end')
+      }, 3000)
         }
-        system.postMessage('hello')
+        
 </script>
