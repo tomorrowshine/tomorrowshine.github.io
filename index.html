@@ -26,6 +26,11 @@
       // 使用定时器模拟接口
       setTimeout(() => {
         // 结束游戏
+        system.onmessage = function(data) {
+          console.log('message received: ' + data)
+        }
+        system.postMessage('hello')
+
         myLucky.stop(0)
       }, 3000)
     }
