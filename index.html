@@ -35,8 +35,8 @@
         '10元红包',
         '感谢参与',
         'MacBook Pro16英寸',
-        '古驰（GUCCI）',
-        '香奈儿（Chanel）口红',
+        '古驰(GUCCI)',
+        '香奈儿(Chanel)口红',
         '感谢参与',
         '50元红包',
         'Apple iPhone 14 Pro',
@@ -45,12 +45,12 @@
         prizes.push({
           text: item,
           background: index % 2 ? '#f9e3bb' : '#f8d384',
-          fonts: [{ text: item, top: '10%', fontWeight: 300 }],
+          fonts: [{ text: item, top: '10%', fontWeight: 300, fontSize: 13 }],
           imgs: [
             {
               src: `./images/${index}.png`,
-              width: '30%',
-              top: '35%',
+              width: '25px',
+              top: '47%',
             },
           ],
         })
@@ -61,9 +61,9 @@
         blocks: [{ padding: '13px', background: '#f6c66f' }],
         prizes: prizes,
         buttons: [
-          { radius: '50px', background: '#FF9900' },
-          { radius: '45px', background: '#fff' },
-          { radius: '41px', background: '#f6c66f', pointer: true },
+          { radius: '37px', background: '#FF9900' },
+          { radius: '32px', background: '#fff' },
+          { radius: '28px', background: '#f6c66f', pointer: true },
           // {
           //   radius: '35px', background: '#ffdea0',
           //   imgs: [{ src: '', width: '65%', top: '-50%' }]
