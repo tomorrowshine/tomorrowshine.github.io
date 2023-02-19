@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>白领车券</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: #ff7e01;
+        font-size: 14px;
+        color: white;
+      }
+      h2 {
+        text-align: center;
+      }
+      .page-content {
+        padding: 20px;
+        font-size: 14px;
+        box-sizing: border-box;
+        line-height: 1.8;
+        overflow: hidden;
+      }
+      p.paragraph {
+        text-align: justify;
+        text-indent: 2em;
+      }
+      .img {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-content">
+      <div onclick="autoHandle()">
+        <image
+          class="img"
+          src="https://img.alicdn.com/imgextra/i1/3175549857/O1CN01SayEZs2MgYl89Txs6_!!3175549857.jpg"
+        />
+        <image
+          class="img"
+          src="https://img.alicdn.com/imgextra/i3/3175549857/O1CN01XqgD572MgYl2izGXn_!!3175549857.jpg"
+        />
+        <image
+          class="img"
+          src="https://img.alicdn.com/imgextra/i3/3175549857/O1CN01ud9kMk2MgYl13KDKI_!!3175549857.jpg"
+        />
+      </div>
+      <div
+        id="btn-area"
+        style="position: absolute; bottom: 110px; width: 90%;"
+      ></div>
+    </div>
+    <script
+      type="text/javascript"
+      src="//statres.quickapp.cn/quickapp/js/qa_router.min.js"
+    ></script>
+    <script>
+      //是否是小米手机
+      function xiaomi(ua) {
+        return 1 < (ua.match(/.*(xiaomi|redmi|mix|mi\s).*/i) || []).length
+      }
+      function factory(ua) {
+        if (ua.indexOf('huawei') > -1 || ua.indexOf('honor') > -1) {
+          return 'huawei'
+        }
+        if (xiaomi(ua)) {
+          return 'xiaomi'
+        }
+        return 'other'
+      }
+      function getQuery(key) {
+        var query = window.location.search.substring(1)
+        var vars = query.split('&')
+        for (var i = 0; i < vars.length; i++) {
+          var pair = vars[i].split('=')
+          if (pair[0] == key) {
+            return decodeURIComponent(pair[1])
+          }
+        }
+        return ''
+      }
+      var ua = navigator.userAgent.toLowerCase()
+      var factorystr = factory(ua) // 手机厂商
+      var channel = getQuery('channel')
+      var pkg = getQuery('pkg')
+      var page = getQuery('page')
+
+      //创建iframe
+      function weakApp(e, id = '') {
+        console.log('weakApp')
+        var a = document['createElement']('iframe')
+        a['id'] = id
+        a['style']['display'] = 'none'
+        a['src'] = e
+        var b = document['getElementsByTagName']('body')[0]
+        if (b) {
+          b['appendChild'](a)
+        } else {
+          window['onload'] = function () {
+            document['body']['appendChild'](a)
+          }
+        }
+      }
+      // 唤醒落地页
+      function jumpPage(type) {
+        try {
+          var hp = pkg + '/' + page + '?channel=' + channel
+          switch (type) {
+            case 'hap':
+              if (factorystr == 'huawei') {
+                weakApp('hwfastapp://' + hp)
+              } else {
+                window.location.href = 'hap://app/' + hp
+              }
+              console.log(hp, 'hap拉起执行')
+              break
+            case 'url':
+              appRouter(pkg, '/' + page, { channel: channel }, false)
+              console.log(hp, 'url拉起执行')
+              break
+            default:
+              jumpPage('hap')
+              break
+          }
+        } catch (e) {
+          console.log('error', e)
+        }
+      }
+      function autoHandle() {
+        jumpPage('hap')
+        setTimeout(() => {
+          if (isShowPage) {
+            jumpPage('url')
+          }
+        }, 3000)
+      }
+      var hiddenProperty =
+        'hidden' in document
+          ? 'hidden'
+          : 'webkitHidden' in document
+          ? 'webkitHidden'
+          : 'mozHidden' in document
+          ? 'mozHidden'
+          : null
+      var visibilityChangeEvent = hiddenProperty.replace(
+        /hidden/i,
+        'visibilitychange',
+      ) // visibilitychange：监听页面显隐
+      var isShowPage = true
+      var onVisibilityChange = function () {
+        if (!document[hiddenProperty]) {
+          // 可见
+          isShowPage = true
+        } else {
+          // 不可见
+          isShowPage = false
+        }
+      }
+      document.addEventListener(visibilityChangeEvent, onVisibilityChange) //监听页面显隐
+      // 唤醒落地页处理
+      function start() {
+        // 其他项目：xiaomi、huawei的机型优先hap拉起  爱奇艺（iqiyi/iqyzn/iqyzw）test渠道拉起方式优先hap拉起
+        if (
+          factorystr == 'xiaomi' ||
+          factorystr == 'huawei' ||
+          channel == 'iqiyi' ||
+          channel == 'iqyzn' ||
+          channel == 'iqyzw' ||
+          channel == 'test'
+        ) {
+          autoHandle()
+        } else {
+          window.history.go(-1)
+        }
+      }
+
+      function handleClickEvent() {
+        autoHandle()
+      }
+      var btn = `
+      <qa-router-button data-package-name=${pkg} data-page=/${page}
+         data-params='{"channel":${channel}}'
+      	 data-design-params='{"fontSize": 16,"designWidth": 1080}'
+      	data-click-event='{"eventName": "handleClickEvent", "eventParams": "anyString"}'>
+      	<templates>
+      		<div class="btn-box">
+              <div id="btn" class="btn an_scale">立即白领车券</div>
+      		</div>
+      	</templates>
+      	<styles>
+      		.btn-box{
+      		  width:100%;
+      		}
+          .btn{
+            font-size: 18px;
+            font-weight: bold;
+            color: #923A00;
+            width: 70%;
+            margin: 0 auto;
+            background-image: linear-gradient(to top, #F39401,#FFF64A);
+            border-radius: 50px;
+            text-align: center;
+            padding: 10px;
+          }
+      		.an_scale {
+      		animation-name: Scale;
+      		animation-iteration-count: infinite;
+      		animation-duration: 1500ms;
+      		animation-fill-mode: none;
+      		animation-timing-function: linear;
+      		}
+      		@keyframes Scale {
+      		0% {
+      		transform: scale(1);
+      		}
+      		50% {
+      		transform: scale(1.1);
+      		}
+      		100% {
+      		transform: scale(1);
+      		}
+      		}
+      	</styles>
+      </qa-router-button>
+      `
+      document.getElementById('btn-area').innerHTML = btn
+
+      start()
+    </script>
+  </body>
+</html>
